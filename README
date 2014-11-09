@@ -5,6 +5,10 @@ Some of these gems will only work with MRI 1.8, as they are native extensions.
 Results
 =======
 
+brew install libcsv
+bundle
+ruby benchmark.rb
+
 Testing csv/presidents.csv
 
                user     system      total        real
