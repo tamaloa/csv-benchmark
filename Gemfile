@@ -1,6 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'fastercsv'
+gem 'bamfcsv'
 gem 'ccsv'
 gem 'csvscan2'
 gem 'excelsior'
