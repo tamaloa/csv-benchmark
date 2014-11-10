@@ -92,7 +92,11 @@ module SharedExamples
   end
 
   def test_unescaped_quote
-    fails('unescaped-quote.csv', 'Missing or stray quote in line 1')
+    fails('unescaped-quote.csv', 'Illegal quoting in line 1.')
+  end
+
+  def test_unescaped_quote_in_quoted_field
+    fails('unescaped-quote-in-quoted-field.csv', 'Missing or stray quote in line 1')
   end
 
   def fails(basename, message)
@@ -123,27 +127,27 @@ class TestCSVScan2 < Test::Unit::TestCase
   end
 end
 
-class TestExcelsior < Test::Unit::TestCase
-  include SharedExamples
-  def actual(filename)
-    File.open(filename, 'r') do |io|
+if false
+  class TestExcelsior < Test::Unit::TestCase
+    include SharedExamples
+    def actual(filename)
+      File.open(filename, 'r') do |io|
+        rows = []
+        Excelsior::Reader.rows(io) {|row| rows << row}
+        rows
+      end
+    end
+  end
+
+  class TestFastestCSV < Test::Unit::TestCase
+    include SharedExamples
+    def actual(filename)
       rows = []
-      Excelsior::Reader.rows(io) {|row| rows << row}
+      FastestCSV.foreach(filename) {|row| rows << row}
       rows
     end
   end
-end
 
-class TestFastestCSV < Test::Unit::TestCase
-  include SharedExamples
-  def actual(filename)
-    rows = []
-    FastestCSV.foreach(filename) {|row| rows << row}
-    rows
-  end
-end
-
-if false
   class TestCcsv < Test::Unit::TestCase
     include SharedExamples
     def actual(filename)
