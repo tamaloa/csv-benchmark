@@ -37,6 +37,10 @@ module SharedExamples
     passes('blank-rows.csv')
   end
 
+  def test_col_sep_in_field
+    passes('col-sep-in-field.csv')
+  end
+
   # @see https://github.com/halogenandtoast/excelsior/issues/6
   def test_escaped_quote
     passes('escaped-quote.csv')
