@@ -87,8 +87,8 @@ module SharedExamples
 
   # @see https://github.com/halogenandtoast/excelsior/issues/1
   # @see https://github.com/halogenandtoast/excelsior/issues/5
-  def test_whitespace_before_quoted_field
-    fails('whitespace-before-quoted-field.csv', 'Illegal quoting in line 1.')
+  def test_no_col_sep
+    fails('no-col-sep.csv', 'Illegal quoting in line 1.')
   end
 
   def test_unmatched_quote
@@ -101,6 +101,10 @@ module SharedExamples
 
   def test_unescaped_quote_in_quoted_field
     fails('unescaped-quote-in-quoted-field.csv', 'Missing or stray quote in line 1')
+  end
+
+  def test_whitespace_before_quoted_field
+    fails('whitespace-before-quoted-field.csv', 'Illegal quoting in line 1.')
   end
 
   def fails(basename, message)
