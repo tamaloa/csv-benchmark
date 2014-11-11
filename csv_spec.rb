@@ -4,7 +4,7 @@ require 'csv'
 require 'test/unit'
 
 require 'ccsv'
-require 'csvscan2'
+require 'fastcsv'
 require 'excelsior'
 require 'fastest-csv'
 require 'rcsv'
@@ -26,7 +26,7 @@ module SharedExamples
 
   def test_bad_encoding
     filename = fixture('bad-encoding.csv')
-    assert_equal(actual(filename), expected(filename, encoding: 'iso-8859-1:utf-8'))
+    assert_equal(expected(filename, encoding: 'iso-8859-1:utf-8'), actual(filename))
   end
 
   def test_blank_field
@@ -41,13 +41,18 @@ module SharedExamples
     passes('col-sep-in-field.csv')
   end
 
-  # @see https://github.com/halogenandtoast/excelsior/issues/6
   def test_escaped_quote
     passes('escaped-quote.csv')
   end
 
   def test_long_row
-    passes('long-row.csv')
+    passes('long-row.csv') do |filename,message|
+      assert(expected(filename) == actual(filename), message)
+    end
+  end
+
+  def test_no_row_sep
+    passes('no-row-sep.csv')
   end
 
   def test_ragged_rows
@@ -58,78 +63,93 @@ module SharedExamples
     passes('row-sep-in-field.csv')
   end
 
-  def passes(basename)
+  def test_trailing_col_sep
+    passes('trailing-col-sep.csv')
+  end
+
+  def test_whitespace_around_unquoted_field
+    passes('whitespace-around-unquoted-field.csv')
+  end
+
+  def passes(basename, message = nil)
     filename = fixture(basename)
-    assert_equal(expected(filename), actual(filename))
-  end
-
-
-
-  # @see https://github.com/halogenandtoast/excelsior/issues/3
-  def test_empty_file
-    passes_or_c_error('empty-file.csv', %w(TestCSVScan2 TestExcelsior), 'segfault')
-  end
-
-  def test_long_field
-    passes_or_c_error('long-field.csv', %w(TestExcelsior), 'hangs')
-  end
-
-  def passes_or_c_error(basename, classes, message)
-    filename = fixture(basename)
-    if classes.include?(self.class.name)
-      assert false, message
+    if block_given?
+      yield(filename, message)
     else
-      assert_equal(expected(filename), actual(filename))
+      assert_equal(expected(filename), actual(filename), message)
     end
   end
 
 
 
-  # @see https://github.com/halogenandtoast/excelsior/issues/1
-  # @see https://github.com/halogenandtoast/excelsior/issues/5
+  def test_empty_file
+    passes_or_c_error('empty-file.csv', %w(TestExcelsior), 'segfault')
+  end
+
+  def test_long_field
+    passes_or_c_error('long-field.csv', %w(TestExcelsior), 'hangs') do |filename,message|
+      assert(expected(filename) == actual(filename), message)
+    end
+  end
+
+  def passes_or_c_error(basename, classes, c_error_message, message = nil)
+    filename = fixture(basename)
+    if classes.include?(self.class.name)
+      assert false, c_error_message
+    elsif block_given?
+      yield(filename, message)
+    else
+      assert_equal(expected(filename), actual(filename), message)
+    end
+  end
+
+
+
   def test_no_col_sep
-    fails('no-col-sep.csv', 'Illegal quoting in line 1.')
+    fails('no-col-sep.csv', ['Illegal quoting in line 1.'])
   end
 
   def test_unmatched_quote
-    fails('unmatched-quote.csv', 'Unclosed quoted field on line 1.')
+    fails('unmatched-quote.csv', ['Unclosed quoted field on line 1.'])
   end
 
   def test_unescaped_quote
-    fails('unescaped-quote.csv', 'Illegal quoting in line 1.')
+    fails('unescaped-quote.csv', ['Illegal quoting in line 1.'])
   end
 
   def test_unescaped_quote_in_quoted_field
-    fails('unescaped-quote-in-quoted-field.csv', 'Missing or stray quote in line 1')
+    fails('unescaped-quote-in-quoted-field.csv', ['Missing or stray quote in line 1', 'Illegal quoting in line 1.']) # FastCSV
+  end
+
+  def test_whitespace_after_quoted_field
+    fails('whitespace-after-quoted-field.csv', ['Unclosed quoted field on line 1.', 'Illegal quoting in line 1.']) # FastCSV
   end
 
   def test_whitespace_before_quoted_field
-    fails('whitespace-before-quoted-field.csv', 'Illegal quoting in line 1.')
+    fails('whitespace-before-quoted-field.csv', ['Illegal quoting in line 1.'])
   end
 
-  def fails(basename, message)
+  def fails(basename, error_messages)
     filename = fixture(basename)
     error = assert_raises(CSV::MalformedCSVError) do
       expected(filename)
     end
-    assert_equal message, error.message
-    error = assert_raises(Rcsv::ParseError) do
+    assert_equal error_messages[0], error.message
+    error = assert_raises(FastCSV::ParseError, Rcsv::ParseError) do
       puts "\n#{actual(filename)}"
     end
-    assert_includes [
-      'Error when parsing malformed data', # Rcsv
-    ], error.message
+    assert_includes error_messages + ['Error when parsing malformed data'], error.message # Rcsv
   end
 end
 
 
 
-class TestCSVScan2 < Test::Unit::TestCase
+class TestFastCSV < Test::Unit::TestCase
   include SharedExamples
   def actual(filename)
     File.open(filename, 'r') do |io|
       rows = []
-      CSVScan.scan(io) {|row| rows << row}
+      FastCSV.scan(io) {|row| rows << row}
       rows
     end
   end

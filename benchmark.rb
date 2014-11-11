@@ -7,7 +7,7 @@ require 'csv'
 require 'fastercsv'
 require 'bamfcsv'
 require 'ccsv'
-require 'csvscan2'
+require 'fastcsv'
 require 'excelsior'
 require 'fasterer_csv'
 require 'fastest-csv'
@@ -78,13 +78,9 @@ focus = ARGV.include?('--focus')
     end
 
     # Fast.
-    # * Fails to parse bad encoding.
-    # * No error on bad quote.
-    # * Returns nil for empty line.
-    # * Segfault on empty input.
-    x.report('csvscan2    ') do
+    x.report('fastcsv     ') do
       File.open(file, 'r') do |io|
-        CSVScan.scan(io) {|row| row}
+        FastCSV.scan(io) {|row| row}
       end
     end
 
