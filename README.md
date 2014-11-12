@@ -10,7 +10,7 @@ Evaluates:
 
 * [fastcsv](https://github.com/opennorth/fastcsv): as fast as `Excelsior`, `FastestCSV`, and `Ccsv` and with full CSV support!
 * [rcsv](https://github.com/fiksu/rcsv): the fastest, but less interchangeable with Ruby's `CSV` than `FastCSV`
-* [bamfcsv](https://github.com/jondistad/bamfcsv): slower than others depending on input, but best error handling
+* [bamfcsv](https://github.com/jondistad/bamfcsv): slower than others if fields are quoted, but best error handling
 * [excelsior](https://github.com/halogenandtoast/excelsior): fails several edges cases
 * [fastest-csv](https://github.com/brightcode/fastest-csv): incorrectly parses multiline fields
 * [ccsv](https://github.com/evan/ccsv): incorrectly parses quoted fields, including multiline fields
