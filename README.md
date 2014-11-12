@@ -8,7 +8,8 @@
 
 Evaluates:
 
-* [rcsv](https://github.com/fiksu/rcsv): the fastest and [least buggy](https://github.com/fiksu/rcsv/issues)
+* [fastcsv](https://github.com/opennorth/fastcsv): as fast as `Excelsior`, `FastestCSV`, and `Ccsv` and with full CSV support!
+* [rcsv](https://github.com/fiksu/rcsv): the fastest, but less interchangeable with Ruby's `CSV` than `FastCSV`
 * [excelsior](https://github.com/halogenandtoast/excelsior): fails several edges cases
 * [fastest-csv](https://github.com/brightcode/fastest-csv): incorrectly parses multiline fields
 * [ccsv](https://github.com/evan/ccsv): incorrectly parses quoted fields, including multiline fields
@@ -23,5 +24,7 @@ Test files from:
 * geoip.csv: [MaxMind](http://www.maxmind.com/app/geolitecountry) (can also try this [larger file](http://www.maxmind.com/app/geolitecity))
 
 ## Compatibility
+
+Tests the fastcsv, rcsv, excelsior, fastest-csv and ccsv CSV implementations:
 
     ruby csv_spec.rb

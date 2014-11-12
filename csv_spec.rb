@@ -164,48 +164,46 @@ class TestFastCSV < Test::Unit::TestCase
   end
 end
 
-if false
-  class TestExcelsior < Test::Unit::TestCase
-    include SharedExamples
-    def actual(filename)
-      File.open(filename, 'r') do |io|
-        rows = []
-        Excelsior::Reader.rows(io) {|row| rows << row}
-        rows
-      end
+class TestExcelsior < Test::Unit::TestCase
+  include SharedExamples
+  def actual(filename)
+    File.open(filename, 'r') do |io|
+      rows = []
+      Excelsior::Reader.rows(io) {|row| rows << row}
+      rows
     end
   end
+end
 
-  class TestFastestCSV < Test::Unit::TestCase
-    include SharedExamples
-    def actual(filename)
+class TestFastestCSV < Test::Unit::TestCase
+  include SharedExamples
+  def actual(filename)
+    rows = []
+    FastestCSV.foreach(filename) {|row| rows << row}
+    rows
+  end
+end
+
+class TestCcsv < Test::Unit::TestCase
+  include SharedExamples
+  def actual(filename)
+    rows = []
+    Ccsv.foreach(filename) {|row| rows << row}
+    rows
+  end
+end
+
+class TestRcsv < Test::Unit::TestCase
+  include SharedExamples
+  def actual(filename, options = {})
+    File.open(filename, 'r') do |io|
       rows = []
-      FastestCSV.foreach(filename) {|row| rows << row}
+      Rcsv.raw_parse(io, options) {|row| rows << row}
       rows
     end
   end
 
-  class TestCcsv < Test::Unit::TestCase
-    include SharedExamples
-    def actual(filename)
-      rows = []
-      Ccsv.foreach(filename) {|row| rows << row}
-      rows
-    end
-  end
-
-  class TestRcsv < Test::Unit::TestCase
-    include SharedExamples
-    def actual(filename, options = {})
-      File.open(filename, 'r') do |io|
-        rows = []
-        Rcsv.raw_parse(io, options) {|row| rows << row}
-        rows
-      end
-    end
-
-    def encoded(filename, encoding)
-      actual(filename, output_encoding: encoding.split(':')[0])
-    end
+  def encoded(filename, encoding)
+    actual(filename, output_encoding: encoding.split(':')[0])
   end
 end

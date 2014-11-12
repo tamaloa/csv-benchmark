@@ -80,7 +80,7 @@ focus = ARGV.include?('--focus')
     # Fast.
     x.report('fastcsv     ') do
       File.open(file, 'r') do |io|
-        FastCSV.scan(io) {|row| row}
+        FastCSV.raw_parse(io) {|row| row}
       end
     end
 
@@ -106,16 +106,12 @@ focus = ARGV.include?('--focus')
       FastestCSV.foreach(file) {|row| row}
     end
 
-    if focus
-      puts "Skipping rcsv (can't configure :row_sep)"
-    else
-      # Fast. Depends on libcsv, which can't set row_sep.
-      # @see https://github.com/fiksu/rcsv/issues
-      # https://github.com/fiksu/rcsv
-      x.report('rcsv        ') do
-        File.open(file, 'r') do |io|
-          Rcsv.raw_parse(io) {|row| row}
-        end
+    # Fast. Depends on libcsv, which can't set row_sep.
+    # @see https://github.com/fiksu/rcsv/issues
+    # https://github.com/fiksu/rcsv
+    x.report('rcsv        ') do
+      File.open(file, 'r') do |io|
+        Rcsv.raw_parse(io) {|row| row}
       end
     end
 
