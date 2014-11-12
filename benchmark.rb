@@ -15,14 +15,21 @@ require 'lightcsv'
 require 'rcsv'
 require 'smarter_csv'
 
-focus = ARGV.include?('--focus')
+only_fastest = ARGV.delete('--only-fastest')
+include_slow = ARGV.delete('--include-slow')
 
-['csv/presidents.csv', 'csv/geoip.csv'].each do |file|
+files = if ARGV.empty?
+  ['csv/geoip.csv']
+else
+  ARGV
+end
+
+files.each do |file|
   puts "\nTesting #{file}\n\n"
 
   Benchmark.bm do |x|
-    if focus
-      puts "Skipping csv (standard library)"
+    if only_fastest
+      puts "Skipping csv (too slow)"
     else
       x.report('csv         ') do
         CSV.foreach(file) {|row| row}
@@ -35,13 +42,13 @@ focus = ARGV.include?('--focus')
       end
     end
 
-    if focus
-      puts "Skipping lightcsv (too slow)"
-    else
+    if include_slow
       # Almost as slow as standard library.
       x.report('lightcsv    ') do
         LightCsv.foreach(file) {|row| row}
       end
+    else
+      puts "Skipping lightcsv (too slow)"
     end
 
     # Fast. Ragel-based. :header option.
@@ -54,27 +61,19 @@ focus = ARGV.include?('--focus')
       end
     end
 
-    if focus
-      puts "Skipping bamfcsv (too slow)"
-    else
-      # Reads the entire file at once, which is not memory efficient, and it's
-      # not as fast as the five fastest, though much faster than others.
-      # https://github.com/jondistad/bamfcsv
-      x.report('bamfcsv     ') do
-        BAMFCSV.read(file)
-      end
+    # Reads the entire file at once, which is not memory efficient, and it's
+    # not as fast as the five fastest, though much faster than others.
+    # https://github.com/jondistad/bamfcsv
+    x.report('bamfcsv     ') do
+      BAMFCSV.read(file)
     end
 
-    if focus
-      puts "Skipping ccsv (only reads from files)"
-    else
-      # Fast. Merged in hopcsv. Enhanced by rcsvreader. Can only read files.
-      # @see https://github.com/evan/ccsv/issues
-      # https://github.com/evan/ccsv/blob/master/ext/ccsv.c
-      # https://github.com/evan/ccsv
-      x.report('ccsv        ') do
-        Ccsv.foreach(file) {|row| row}
-      end
+    # Fast. Merged in hopcsv. Enhanced by rcsvreader. Can only read files.
+    # @see https://github.com/evan/ccsv/issues
+    # https://github.com/evan/ccsv/blob/master/ext/ccsv.c
+    # https://github.com/evan/ccsv
+    x.report('ccsv        ') do
+      Ccsv.foreach(file) {|row| row}
     end
 
     # Fast.
@@ -84,18 +83,15 @@ focus = ARGV.include?('--focus')
       end
     end
 
-    if focus
-      puts "Skipping fasterer-csv (errors easily)"
-    else
-      # Errors if a row's length is greater than the header's length.
-      begin
-        x.report('fasterer-csv') do
-          File.open(file, 'r') do |io|
-            FastererCSV.parse(io)
-          end
+    # Errors if a row's length is greater than the header's length.
+    begin
+      x.report('fasterer-csv') do
+        File.open(file, 'r') do |io|
+          FastererCSV.parse(io)
         end
-      rescue
       end
+    rescue => e
+      puts e
     end
 
     # Fast.
@@ -115,13 +111,13 @@ focus = ARGV.include?('--focus')
       end
     end
 
-    if focus
-      puts "Skipping smarter_csv (too slow)"
-    else
+    if include_slow
       # Slower than standard library.
       x.report('smarter_csv ') do
         SmarterCSV.process(file)
       end
+    else
+      puts "Skipping smarter_csv (too slow)"
     end
   end
 end

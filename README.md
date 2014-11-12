@@ -10,10 +10,10 @@ Evaluates:
 
 * [fastcsv](https://github.com/opennorth/fastcsv): as fast as `Excelsior`, `FastestCSV`, and `Ccsv` and with full CSV support!
 * [rcsv](https://github.com/fiksu/rcsv): the fastest, but less interchangeable with Ruby's `CSV` than `FastCSV`
+* [bamfcsv](https://github.com/jondistad/bamfcsv): slower than others depending on input, but best error handling
 * [excelsior](https://github.com/halogenandtoast/excelsior): fails several edges cases
 * [fastest-csv](https://github.com/brightcode/fastest-csv): incorrectly parses multiline fields
 * [ccsv](https://github.com/evan/ccsv): incorrectly parses quoted fields, including multiline fields
-* [bamfcsv](https://github.com/jondistad/bamfcsv): faster than standard library, but not as fast as the above
 * [lightcsv](https://github.com/tmtm/lightcsv): as slow as standard library
 * [smarter_csv](https://github.com/tilo/smarter_csv): slower than standard library
 * [fasterer-csv](https://github.com/gnovos/fasterer-csv): fails on valid input

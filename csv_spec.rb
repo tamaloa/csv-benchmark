@@ -3,6 +3,7 @@ require 'bundler/setup'
 require 'csv'
 require 'test/unit'
 
+require 'bamfcsv'
 require 'ccsv'
 require 'fastcsv'
 require 'excelsior'
@@ -111,27 +112,27 @@ module SharedExamples
 
 
   def test_no_col_sep
-    fails('no-col-sep.csv', ['Illegal quoting in line 1.'])
+    fails('no-col-sep.csv', ['Illegal quoting in line 1.', "Illegal quoting on line 1, cell 1: Quoted cell must open with '\"'"]) # BAMFCSV
   end
 
   def test_unmatched_quote
-    fails('unmatched-quote.csv', ['Unclosed quoted field on line 1.'])
+    fails('unmatched-quote.csv', ['Unclosed quoted field on line 1.', "Illegal quoting on line 1, cell 3: File ends without closing '\"'"]) # BAMFCSV
   end
 
   def test_unescaped_quote
-    fails('unescaped-quote.csv', ['Illegal quoting in line 1.'])
+    fails('unescaped-quote.csv', ['Illegal quoting in line 1.', "Illegal quoting on line 1, cell 1: Quoted cell must open with '\"'"]) # BAMFCSV
   end
 
   def test_unescaped_quote_in_quoted_field
-    fails('unescaped-quote-in-quoted-field.csv', ['Missing or stray quote in line 1', 'Illegal quoting in line 1.']) # FastCSV
+    fails('unescaped-quote-in-quoted-field.csv', ['Missing or stray quote in line 1', 'Illegal quoting in line 1.', "Illegal quoting on line 1, cell 1"]) # FastCSV, BAMFCSV
   end
 
   def test_whitespace_after_quoted_field
-    fails('whitespace-after-quoted-field.csv', ['Unclosed quoted field on line 1.', 'Illegal quoting in line 1.']) # FastCSV
+    fails('whitespace-after-quoted-field.csv', ['Unclosed quoted field on line 1.', 'Illegal quoting in line 1.', "Illegal quoting on line 1, cell 2"]) # FastCSV, BAMFCSV
   end
 
   def test_whitespace_before_quoted_field
-    fails('whitespace-before-quoted-field.csv', ['Illegal quoting in line 1.'])
+    fails('whitespace-before-quoted-field.csv', ['Illegal quoting in line 1.', "Illegal quoting on line 1, cell 3: Quoted cell must open with '\"'"]) # BAMFCSV
   end
 
   def fails(basename, error_messages)
@@ -140,7 +141,7 @@ module SharedExamples
       expected(filename)
     end
     assert_equal error_messages[0], error.message
-    error = assert_raises(FastCSV::ParseError, Rcsv::ParseError) do
+    error = assert_raises(FastCSV::ParseError, BAMFCSV::MalformedCSVError, Rcsv::ParseError) do
       puts "\n#{actual(filename)}"
     end
     assert_includes error_messages + ['Error when parsing malformed data'], error.message # Rcsv
@@ -148,6 +149,33 @@ module SharedExamples
 end
 
 
+
+class TestBAMFCSV < Test::Unit::TestCase
+  include SharedExamples
+  def actual(filename)
+    BAMFCSV.read(filename)
+  end
+end
+
+class TestCcsv < Test::Unit::TestCase
+  include SharedExamples
+  def actual(filename)
+    rows = []
+    Ccsv.foreach(filename) {|row| rows << row}
+    rows
+  end
+end
+
+class TestExcelsior < Test::Unit::TestCase
+  include SharedExamples
+  def actual(filename)
+    File.open(filename, 'r') do |io|
+      rows = []
+      Excelsior::Reader.rows(io) {|row| rows << row}
+      rows
+    end
+  end
+end
 
 class TestFastCSV < Test::Unit::TestCase
   include SharedExamples
@@ -164,31 +192,11 @@ class TestFastCSV < Test::Unit::TestCase
   end
 end
 
-class TestExcelsior < Test::Unit::TestCase
-  include SharedExamples
-  def actual(filename)
-    File.open(filename, 'r') do |io|
-      rows = []
-      Excelsior::Reader.rows(io) {|row| rows << row}
-      rows
-    end
-  end
-end
-
 class TestFastestCSV < Test::Unit::TestCase
   include SharedExamples
   def actual(filename)
     rows = []
     FastestCSV.foreach(filename) {|row| rows << row}
-    rows
-  end
-end
-
-class TestCcsv < Test::Unit::TestCase
-  include SharedExamples
-  def actual(filename)
-    rows = []
-    Ccsv.foreach(filename) {|row| rows << row}
     rows
   end
 end
