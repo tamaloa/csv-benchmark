@@ -22,11 +22,16 @@ module SharedExamples
     raise NotImplementedError
   end
 
+  def encoded(filename, encoding)
+    actual(filename)
+  end
+
 
 
   def test_bad_encoding
+    encoding = 'iso-8859-1:utf-8'
     filename = fixture('bad-encoding.csv')
-    assert_equal(expected(filename, encoding: 'iso-8859-1:utf-8'), actual(filename))
+    assert_equal(expected(filename, encoding: encoding), encoded(filename, encoding))
   end
 
   def test_blank_field
@@ -146,12 +151,16 @@ end
 
 class TestFastCSV < Test::Unit::TestCase
   include SharedExamples
-  def actual(filename)
+  def actual(filename, options = {})
     File.open(filename, 'r') do |io|
       rows = []
-      FastCSV.scan(io) {|row| rows << row}
+      FastCSV.raw_parse(io, options) {|row| rows << row}
       rows
     end
+  end
+
+  def encoded(filename, encoding)
+    actual(filename, encoding: encoding)
   end
 end
 
@@ -187,12 +196,16 @@ if false
 
   class TestRcsv < Test::Unit::TestCase
     include SharedExamples
-    def actual(filename)
+    def actual(filename, options = {})
       File.open(filename, 'r') do |io|
         rows = []
-        Rcsv.raw_parse(io, output_encoding: 'iso-8859-1') {|row| rows << row}
+        Rcsv.raw_parse(io, options) {|row| rows << row}
         rows
       end
+    end
+
+    def encoded(filename, encoding)
+      actual(filename, output_encoding: encoding.split(':')[0])
     end
   end
 end
