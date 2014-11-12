@@ -5,11 +5,14 @@
     brew install libcsv
     bundle
     ruby benchmark.rb
+    ruby benchmark.rb <csv file>
+    ruby benchmark.rb --include-slow
+    ruby benchmark.rb --only-fastest
 
 Evaluates:
 
-* [fastcsv](https://github.com/opennorth/fastcsv): as fast as `Excelsior`, `FastestCSV`, and `Ccsv` and with full CSV support!
-* [rcsv](https://github.com/fiksu/rcsv): the fastest, but less interchangeable with Ruby's `CSV` than `FastCSV`
+* [fastcsv](https://github.com/opennorth/fastcsv): as fast as others, with full CSV support!
+* [rcsv](https://github.com/fiksu/rcsv): the fastest on average, but less interchangeable with Ruby's `CSV` than `FastCSV`
 * [bamfcsv](https://github.com/jondistad/bamfcsv): slower than others if fields are quoted, but best error handling
 * [excelsior](https://github.com/halogenandtoast/excelsior): fails several edges cases
 * [fastest-csv](https://github.com/brightcode/fastest-csv): incorrectly parses multiline fields
@@ -25,6 +28,6 @@ Test files from:
 
 ## Compatibility
 
-Tests the fastcsv, rcsv, excelsior, fastest-csv and ccsv CSV implementations:
+Tests the fastcsv, rcsv, bamfcsv, excelsior, fastest-csv and ccsv CSV implementations:
 
     ruby csv_spec.rb
