@@ -16,7 +16,7 @@ require 'rcsv'
 require 'smarter_csv'
 
 only_fastest = ARGV.delete('--only-fastest')
-include_slow = ARGV.delete('--include-slow')
+only_fast = ARGV.delete('--only-fast') || only_fastest
 
 files = if ARGV.empty?
   ['csv/geoip.csv']
@@ -28,8 +28,8 @@ files.each do |file|
   puts "\nTesting #{file}\n\n"
 
   Benchmark.bm do |x|
-    if only_fastest
-      puts "Skipping csv (too slow)"
+    if only_fast
+      puts "Skipping csv (not fast)"
     else
       x.report('csv         ') do
         CSV.foreach(file) {|row| row}
@@ -42,13 +42,13 @@ files.each do |file|
       end
     end
 
-    if include_slow
+    if only_fast
+      puts "Skipping lightcsv (not fast)"
+    else
       # Almost as slow as standard library.
       x.report('lightcsv    ') do
         LightCsv.foreach(file) {|row| row}
       end
-    else
-      puts "Skipping lightcsv (too slow)"
     end
 
     # Fast. Ragel-based. :header option.
@@ -64,8 +64,12 @@ files.each do |file|
     # Reads the entire file at once, which is not memory efficient, and it's
     # not as fast as the five fastest, though much faster than others.
     # https://github.com/jondistad/bamfcsv
-    x.report('bamfcsv     ') do
-      BAMFCSV.read(file)
+    if only_fastest
+      puts "Skipping bamfcsv (not fastest)"
+    else
+      x.report('bamfcsv     ') do
+        BAMFCSV.read(file)
+      end
     end
 
     # Fast. Merged in hopcsv. Enhanced by rcsvreader. Can only read files.
@@ -83,16 +87,12 @@ files.each do |file|
       end
     end
 
-    # Errors if a row's length is greater than the header's length.
-    begin
-      x.report('fasterer-csv') do
-        File.open(file, 'r') do |io|
-          FastererCSV.parse(io)
-        end
-      end
-    rescue => e
-      puts e
-    end
+    # Errors loudly (print statements) if a row's length is greater than the header's length.
+    # x.report('fasterer-csv') do
+    #   File.open(file, 'r') do |io|
+    #     FastererCSV.parse(io)
+    #   end
+    # end
 
     # Fast.
     # @see https://github.com/brightcode/fastest-csv/issues
@@ -111,13 +111,13 @@ files.each do |file|
       end
     end
 
-    if include_slow
+    if only_fast
+      puts "Skipping smarter_csv (not fast)"
+    else
       # Slower than standard library.
       x.report('smarter_csv ') do
         SmarterCSV.process(file)
       end
-    else
-      puts "Skipping smarter_csv (too slow)"
     end
   end
 end
