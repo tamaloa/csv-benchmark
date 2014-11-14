@@ -25,6 +25,7 @@ Output from running only fastest on [OpenlyLocal](http://www.openlylocal.com/)'s
 
 ```
 user         system      total     real
+csv          84.990000   0.930000  85.920000 ( 85.998271)
 excelsior    37.750000   0.640000  38.390000 ( 38.447401)
 ccsv         16.640000   0.700000  17.340000 ( 17.364485)
 fastcsv      14.710000   0.700000  15.410000 ( 15.422187)
