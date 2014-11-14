@@ -43,6 +43,10 @@ module SharedExamples
     passes('blank-rows.csv')
   end
 
+  def test_crlf
+    passes('crlf.csv')
+  end
+
   def test_col_sep_in_field
     passes('col-sep-in-field.csv')
   end
@@ -141,7 +145,7 @@ module SharedExamples
       expected(filename)
     end
     assert_equal error_messages[0], error.message
-    error = assert_raises(FastCSV::ParseError, BAMFCSV::MalformedCSVError, Rcsv::ParseError) do
+    error = assert_raises(FastCSV::MalformedCSVError, BAMFCSV::MalformedCSVError, Rcsv::ParseError) do
       puts "\n#{actual(filename)}"
     end
     assert_includes error_messages + ['Error when parsing malformed data'], error.message # Rcsv
