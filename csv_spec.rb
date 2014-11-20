@@ -44,7 +44,7 @@ module SharedExamples
   end
 
   def test_crlf
-    passes('crlf.csv')
+    passes('crlf.csv', 'TestCcsv' => "\r\n")
   end
 
   def test_col_sep_in_field
@@ -81,12 +81,16 @@ module SharedExamples
     passes('whitespace-around-unquoted-field.csv')
   end
 
-  def passes(basename, message = nil)
+  def passes(basename, options = {}, message = nil)
     filename = fixture(basename)
     if block_given?
       yield(filename, message)
     else
-      assert_equal(expected(filename), actual(filename), message)
+      if options.key?(self.class.name)
+        assert_equal(expected(filename), actual(filename, options[self.class.name]), message)
+      else
+        assert_equal(expected(filename), actual(filename), message)
+      end
     end
   end
 
@@ -163,9 +167,9 @@ end
 
 class TestCcsv < Test::Unit::TestCase
   include SharedExamples
-  def actual(filename)
+  def actual(filename, row_sep = "\n")
     rows = []
-    Ccsv.foreach(filename) {|row| rows << row}
+    Ccsv.foreach(filename, row_sep) {|row| rows << row}
     rows
   end
 end
