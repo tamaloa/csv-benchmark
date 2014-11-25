@@ -44,7 +44,7 @@ module SharedExamples
   end
 
   def test_crlf
-    passes('crlf.csv', 'TestCcsv' => "\r\n")
+    passes('crlf.csv')
   end
 
   def test_col_sep_in_field
@@ -167,9 +167,9 @@ end
 
 class TestCcsv < Test::Unit::TestCase
   include SharedExamples
-  def actual(filename, row_sep = "\n")
+  def actual(filename, col_sep = ',')
     rows = []
-    Ccsv.foreach(filename, row_sep) {|row| rows << row}
+    Ccsv.foreach(filename, col_sep) {|row| rows << row}
     rows
   end
 end
