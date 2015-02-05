@@ -26,11 +26,11 @@ Output from running only fastest on [OpenlyLocal](http://www.openlylocal.com/)'s
 ```
 user         system      total     real
 csv          84.990000   0.930000  85.920000 ( 85.998271)
-excelsior    37.750000   0.640000  38.390000 ( 38.447401)
-ccsv         16.640000   0.700000  17.340000 ( 17.364485)
-fastcsv      14.710000   0.700000  15.410000 ( 15.422187)
-fastest-csv  15.670000   0.820000  16.490000 ( 16.519444)
-rcsv         19.300000   0.950000  20.250000 ( 20.268348)
+excelsior    35.370000   0.860000  36.230000 ( 36.601276)
+ccsv         15.890000   0.680000  16.570000 ( 16.685589)
+fastcsv      18.840000   0.760000  19.600000 ( 19.680719)
+fastest-csv  15.310000   0.740000  16.050000 ( 16.108917)
+rcsv         22.290000   1.260000  23.550000 ( 24.238066)
 ```
 
 Test files from [original repository](https://github.com/vonconrad/csv-benchmark):
