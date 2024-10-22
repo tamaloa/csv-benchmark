@@ -5,10 +5,10 @@ require 'benchmark'
 
 require 'csv'
 require 'fastercsv'
-require 'bamfcsv'
+# require 'bamfcsv'
 require 'ccsv'
 require 'fastcsv'
-require 'excelsior'
+# require 'excelsior'
 require 'fasterer_csv'
 require 'fastest-csv'
 require 'lightcsv'
@@ -55,22 +55,22 @@ files.each do |file|
     # https://github.com/halogenandtoast/excelsior/issues
     # https://github.com/halogenandtoast/excelsior/blob/master/ext/excelsior_reader/excelsior_reader.rl
     # https://github.com/halogenandtoast/excelsior
-    x.report('excelsior   ') do
-      File.open(file, 'r') do |io|
-        Excelsior::Reader.rows(io) {|row| row}
-      end
-    end
+    # x.report('excelsior   ') do
+    #   File.open(file, 'r') do |io|
+    #     Excelsior::Reader.rows(io) {|row| row}
+    #   end
+    # end
 
     # Reads the entire file at once, which is not memory efficient, and it's
     # not as fast as the five fastest, though much faster than others.
     # https://github.com/jondistad/bamfcsv
-    if only_fastest
-      puts "Skipping bamfcsv (not fastest)"
-    else
-      x.report('bamfcsv     ') do
-        BAMFCSV.read(file)
-      end
-    end
+    # if only_fastest
+    #   puts "Skipping bamfcsv (not fastest)"
+    # else
+    #   x.report('bamfcsv     ') do
+    #     BAMFCSV.read(file)
+    #   end
+    # end
 
     # Fast. Merged in hopcsv. Enhanced by rcsvreader. Can only read files.
     # @see https://github.com/evan/ccsv/issues

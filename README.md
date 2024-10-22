@@ -21,16 +21,41 @@ Evaluates:
 * [smarter_csv](https://github.com/tilo/smarter_csv): slower than standard library
 * [fasterer-csv](https://github.com/gnovos/fasterer-csv): errors on valid input
 
-Output from running only fastest on [OpenlyLocal](http://www.openlylocal.com/)'s [1.2G CSV of council spending](http://www.openlylocal.com/councils/spending.csv.zip) (83MB ZIP):
+
 
 ```
-user         system      total     real
-csv          84.990000   0.930000  85.920000 ( 85.998271)
-excelsior    35.370000   0.860000  36.230000 ( 36.601276)
-ccsv         15.890000   0.680000  16.570000 ( 16.685589)
-fastcsv      18.840000   0.760000  19.600000 ( 19.680719)
-fastest-csv  15.310000   0.740000  16.050000 ( 16.108917)
-rcsv         22.290000   1.260000  23.550000 ( 24.238066)
+$ ruby -v
+ruby 3.3.5 (2024-09-03 revision ef084cc8f4) [x86_64-linux]
+
+$ ruby benchmark.rb
+
+Testing csv/geoip.csv
+
+       user     system      total        real
+csv           1.071429   0.000000   1.071429 (  1.072142)
+lightcsv      0.611070   0.003797   0.614867 (  0.615105)
+ccsv          0.053633   0.000000   0.053633 (  0.053660)
+fastcsv       0.091331   0.003932   0.095263 (  0.095299)
+fastest-csv   0.060950   0.004018   0.064968 (  0.064996)
+rcsv          0.071841   0.007987   0.079828 (  0.079866)
+smarter_csv   3.459755   0.016035   3.475790 (  3.477682)
+```
+
+For following versions:
+
+```
+Gems included by the bundle:
+  * bamfcsv (0.3.2)
+  * ccsv (1.1.0)
+  * csv (3.3.0)
+  * excelsior (0.1.0)
+  * fastcsv (0.0.7)
+  * fastercsv (1.5.5)
+  * fasterer-csv (2.1.0)
+  * fastest-csv (0.0.4)
+  * lightcsv (0.2.4)
+  * rcsv (0.3.1)
+  * smarter_csv (1.12.1)
 ```
 
 Test files from [original repository](https://github.com/vonconrad/csv-benchmark):

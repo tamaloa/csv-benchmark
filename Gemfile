@@ -1,5 +1,6 @@
 source 'http://rubygems.org'
 
+gem 'csv' # will no longer be part of the default gems starting from Ruby 3.4.0
 gem 'fastercsv'
 gem 'bamfcsv'
 gem 'ccsv'
